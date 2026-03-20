@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import asyncio
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
@@ -87,18 +88,23 @@ class AvalonWorkModeSelect(CoordinatorEntity, SelectEntity):
         return "Mining"  # Default fallback
 
     async def async_select_option(self, option: str) -> None:
-        if option == "Heater - Eco":
-            await self.api.set_workmode(0)  # Heater mode
-            await self.api.set_worklevel(-1)  # Eco level
-        elif option == "Heater - Super":
-            await self.api.set_workmode(0)  # Heater mode
-            await self.api.set_worklevel(0)  # Super level
-        elif option == "Mining":
-            await self.api.set_workmode(1)  # Mining mode
-        elif option == "Night":
-            await self.api.set_workmode(2)  # Night mode
-        else:
-            _LOGGER.warning("Unknown work mode: %s", option)
-            return
+        try:
+            if option == "Heater - Eco":
+                await self.api.set_workmode(0)  # Heater mode
+                await asyncio.sleep(0.5)  # Small delay to prevent race condition
+                await self.api.set_worklevel(-1)  # Eco level
+            elif option == "Heater - Super":
+                await self.api.set_workmode(0)  # Heater mode
+                await asyncio.sleep(0.5)  # Small delay to prevent race condition
+                await self.api.set_worklevel(0)  # Super level
+            elif option == "Mining":
+                await self.api.set_workmode(1)  # Mining mode
+            elif option == "Night":
+                await self.api.set_workmode(2)  # Night mode
+            else:
+                _LOGGER.warning("Unknown work mode: %s", option)
+                return
 
-        await self.coordinator.async_request_refresh()
+            await self.coordinator.async_request_refresh()
+        except Exception as e:
+            _LOGGER.error("Error setting work mode: %s", e)
