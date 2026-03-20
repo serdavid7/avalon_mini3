@@ -10,7 +10,7 @@ permissions:
   contents: read
 jobs:
   validate:
-    if: github.repository_owner == 'Jinx-22'
+    if: github.repository_owner == 'serdavid7'
     runs-on: "ubuntu-latest"
     steps:
       - uses: "actions/checkout@v6"
