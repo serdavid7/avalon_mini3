@@ -19,20 +19,11 @@ _LOGGER = logging.getLogger(__name__)
 # Workmode Mapping
 # =========================
 WORK_MODES = {
-    "Heater": 0,
     "Mining": 1,
     "Night": 2,
+    "Heater - Eco": "heater_eco",
+    "Heater - Super": "heater_super",
 }
-REVERSE_WORK_MODES = {v: k for k, v in WORK_MODES.items()}
-
-# =========================
-# Worklevels Mapping
-# =========================
-WORK_LEVELS = {
-    "Eco": -1,
-    "Super": 0
-}
-REVERSE_WORK_LEVELS = {v: k for k, v in WORK_LEVELS.items()}
 
 # =========================
 # Setup Entry
@@ -50,8 +41,7 @@ async def async_setup_entry(
 
     async_add_entities(
         [
-            AvalonWorkModeSelect(coordinator, api, entry.entry_id, device_info),
-            AvalonWorkLevelSelect(coordinator, api, entry.entry_id, device_info)
+            AvalonWorkModeSelect(coordinator, api, entry.entry_id, device_info)
         ]
     )
 
@@ -82,56 +72,33 @@ class AvalonWorkModeSelect(CoordinatorEntity, SelectEntity):
     def current_option(self) -> str:
         estats = self.coordinator.data.get("estats", {})
         workmode_val = estats.get("WORKMODE")
-        try:
-            return REVERSE_WORK_MODES[int(workmode_val)]
-        except (TypeError, ValueError, KeyError):
-            return "Low"
-
-    async def async_select_option(self, option: str) -> None:
-        level = WORK_MODES.get(option)
-        if level is None:
-            _LOGGER.warning("Unbekannter Workmode: %s", option)
-            return
-
-        await self.api.set_workmode(level)
-        await self.coordinator.async_request_refresh()
-
-# =========================
-# Worklevel Select
-# =========================
-class AvalonWorkLevelSelect(CoordinatorEntity, SelectEntity):
-
-    _attr_has_entity_name = True
-    _attr_options = list(WORK_LEVELS.keys())
-    _attr_translation_key = "worklevel"
-
-    def __init__(
-        self,
-        coordinator: AvalonMinerCoordinator,
-        api: AsyncMini3AvalonAPI,
-        entry_id: str,
-        device_info: dict,
-    ):
-        super().__init__(coordinator)
-        self.api = api
-
-        self._attr_unique_id = f"{entry_id}_worklevel"
-        self._attr_device_info = device_info
-
-    @property
-    def current_option(self) -> str:
-        estats = self.coordinator.data.get("estats", {})
         worklevel_val = estats.get("WORKLEVEL")
-        try:
-            return REVERSE_WORK_LEVELS[int(worklevel_val)]
-        except (TypeError, ValueError, KeyError):
-            return "Super"
+
+        # Determine the current mode and level
+        if workmode_val == 0 and worklevel_val == -1:
+            return "Heater - Eco"
+        elif workmode_val == 0 and worklevel_val == 0:
+            return "Heater - Super"
+        elif workmode_val == 1:
+            return "Mining"
+        elif workmode_val == 2:
+            return "Night"
+        
+        return "Mining"  # Default fallback
 
     async def async_select_option(self, option: str) -> None:
-        level = WORK_LEVELS.get(option)
-        if level is None:
-            _LOGGER.warning("Unbekannter Worklevel: %s", option)
+        if option == "Heater - Eco":
+            await self.api.set_workmode(0)  # Heater mode
+            await self.api.set_worklevel(-1)  # Eco level
+        elif option == "Heater - Super":
+            await self.api.set_workmode(0)  # Heater mode
+            await self.api.set_worklevel(0)  # Super level
+        elif option == "Mining":
+            await self.api.set_workmode(1)  # Mining mode
+        elif option == "Night":
+            await self.api.set_workmode(2)  # Night mode
+        else:
+            _LOGGER.warning("Unknown work mode: %s", option)
             return
 
-        await self.api.set_worklevel(level)
         await self.coordinator.async_request_refresh()
