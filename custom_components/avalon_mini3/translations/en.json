@@ -2,8 +2,8 @@
   "config": {
     "step": {
       "user": {
-        "title": "Avalon Mini 3 Setup",
-        "description": "Enter the connection details for your Avalon Mini 3."
+        "title": "Avalon Nano 3S Setup",
+        "description": "Enter the connection details for your Avalon Nano 3S."
       }
     },
     "error": {
@@ -17,7 +17,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "Avalon Mini 3 Options",
+        "title": "Avalon Nano 3S Options",
         "description": "What would you like to change?",
         "data": {
           "action": "Select action"
@@ -299,14 +299,13 @@
     },
 
     "light": {
-      "led_color": {
-        "name": "LED Color"
+      "led_light": {
+        "name": "LED Light"
       }
     },
 
     "select": {
-      "workmode": { "name": "Work Mode" },
-      "led_effect": { "name": "LED Effect" }
+      "workmode": { "name": "Work Mode" }
     }
   }
 }

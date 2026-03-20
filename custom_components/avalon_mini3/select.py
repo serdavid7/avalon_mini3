@@ -22,6 +22,7 @@ WORK_MODES = {
     "Heater - Super": 0,
     "Mining": 1,
     "Night": 2,
+    "Heater - Eco": 3,
 }
 REVERSE_WORK_MODES = {v: k for k, v in WORK_MODES.items()}
 

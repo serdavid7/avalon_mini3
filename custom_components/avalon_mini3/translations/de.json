@@ -300,13 +300,12 @@
       }
     },
     "light": {
-      "led_color": { 
-        "name": "LED Farbe"
+      "led_light": { 
+        "name": "LED"
       }
     },
     "select": {
-      "workmode": { "name": "Arbeitsmodus" },
-      "led_effect": { "name": "LED Effekt" }
+      "workmode": { "name": "Arbeitsmodus" }
     }
   }
 }
