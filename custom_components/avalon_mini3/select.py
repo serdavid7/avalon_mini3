@@ -35,16 +35,6 @@ WORK_LEVELS = {
 REVERSE_WORK_LEVELS = {v: k for k, v in WORK_LEVELS.items()}
 
 # =========================
-# LCD Mapping
-# =========================
-LCD = {
-    "off": "0:0",
-    "on": "0:1",
-}
-REVERSE_LCD = {v: k for k, v in LCD.items()}
-
-
-# =========================
 # Setup Entry
 # =========================
 async def async_setup_entry(
@@ -61,8 +51,7 @@ async def async_setup_entry(
     async_add_entities(
         [
             AvalonWorkModeSelect(coordinator, api, entry.entry_id, device_info),
-            AvalonWorkLevelSelect(coordinator, api, entry.entry_id, device_info),
-            AvalonLCDSelect(coordinator, api, entry.entry_id, device_info)
+            AvalonWorkLevelSelect(coordinator, api, entry.entry_id, device_info)
         ]
     )
 
@@ -131,7 +120,7 @@ class AvalonWorkLevelSelect(CoordinatorEntity, SelectEntity):
 
     @property
     def current_option(self) -> str:
-        estats = self.coordinator.data.get("estats", {})
+        estats = self.coordinator.data.get("estat s", {})
         worklevel_val = estats.get("WORKLEVEL")
         try:
             return REVERSE_WORK_LEVELS[int(worklevel_val)]
@@ -145,44 +134,4 @@ class AvalonWorkLevelSelect(CoordinatorEntity, SelectEntity):
             return
 
         await self.api.set_worklevel(level)
-        await self.coordinator.async_request_refresh()
-
-# =========================
-# LCD Select
-# =========================
-class AvalonLCDSelect(CoordinatorEntity, SelectEntity):
-
-    _attr_has_entity_name = True
-    _attr_options = list(LCD.keys())
-    _attr_translation_key = "lcd"
-
-    def __init__(
-        self,
-        coordinator: AvalonMinerCoordinator,
-        api: AsyncMini3AvalonAPI,
-        entry_id: str,
-        device_info: dict,
-    ):
-        super().__init__(coordinator)
-        self.api = api
-
-        self._attr_unique_id = f"{entry_id}_lcd"
-        self._attr_device_info = device_info
-
-    @property
-    def current_option(self) -> str:
-        estats = self.coordinator.data.get("estats", {})
-        lcd_val = estats.get("LCD")
-        try:
-            return REVERSE_LCD[lcd_val]
-        except (TypeError, ValueError, KeyError):
-            return "off"
-
-    async def async_select_option(self, option: str) -> None:
-        level = LCD.get(option)
-        if level is None:
-            _LOGGER.warning("Unknown LCD option: %s", option)
-            return
-
-        await self.api.set_lcd(level)
         await self.coordinator.async_request_refresh()
