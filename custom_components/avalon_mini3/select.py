@@ -10,7 +10,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import AvalonMinerCoordinator
-from .avalon_api import AsyncAvalonAPI
+from .avalon_api import AsyncMini3AvalonAPI
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -46,7 +46,7 @@ async def async_setup_entry(
     data = hass.data[DOMAIN][entry.entry_id]
 
     coordinator: AvalonMinerCoordinator = data["coordinator"]
-    api: AsyncAvalonAPI = data["api"]
+    api: AsyncMini3AvalonAPI = data["api"]
     device_info = data["device_info"]
 
     async_add_entities(
@@ -70,7 +70,7 @@ class AvalonWorkModeSelect(CoordinatorEntity, SelectEntity):
     def __init__(
         self,
         coordinator: AvalonMinerCoordinator,
-        api: AsyncAvalonAPI,
+        api: AsyncMini3AvalonAPI,
         entry_id: str,
         device_info: dict,
     ):
@@ -112,7 +112,7 @@ class AvalonLedEffectSelect(CoordinatorEntity, SelectEntity):
     def __init__(
         self,
         coordinator: AvalonMinerCoordinator,
-        api: AsyncAvalonAPI,
+        api: AsyncMini3AvalonAPI,
         entry_id: str,
         device_info: dict,
     ):

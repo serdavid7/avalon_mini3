@@ -7,7 +7,7 @@ from .const import DEFAULT_PORT, DEFAULT_TIMEOUT, DEFAULT_WEB_USER, DEFAULT_WEB_
 
 _LOGGER = logging.getLogger(__name__)
 
-class AsyncAvalonAPI:
+class AsyncMini3AvalonAPI:
     def __init__(
         self,
         host: str,

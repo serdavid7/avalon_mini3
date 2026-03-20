@@ -6,7 +6,7 @@ from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig
-from .avalon_api import AsyncAvalonAPI
+from .avalon_api import AsyncMini3AvalonAPI
 from .const import (
     DOMAIN,
     CONF_HOST,
@@ -69,7 +69,7 @@ class AvalonMini3OptionsFlowHandler(config_entries.OptionsFlow):
     """Options-Flow mit allen Funktionen: Intervall, Web-Passwort, Pools"""
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         self._config_entry = config_entry
-        self._api = AsyncAvalonAPI(
+        self._api = AsyncMini3AvalonAPI(
             host=config_entry.data[CONF_HOST],
             port=config_entry.data[CONF_PORT],
             timeout=config_entry.data[CONF_TIMEOUT],

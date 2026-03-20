@@ -6,7 +6,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform, CONF_HOST, CONF_PORT, CONF_TIMEOUT
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.exceptions import ConfigEntryNotReady
-from .avalon_api import AsyncAvalonAPI
+from .avalon_api import AsyncMini3AvalonAPI
 from .const import DOMAIN, CONF_UPDATE_INTERVAL
 
 _LOGGER = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ PLATFORMS: list[Platform] = [
 class AvalonMinerCoordinator(DataUpdateCoordinator[dict]):
     """Data coordinator für Avalon Mini 3"""
 
-    def __init__(self, hass: HomeAssistant, api: AsyncAvalonAPI, update_interval: timedelta) -> None:
+    def __init__(self, hass: HomeAssistant, api: AsyncMini3AvalonAPI, update_interval: timedelta) -> None:
         super().__init__(
             hass,
             _LOGGER,
@@ -58,7 +58,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         entry.data.get(CONF_UPDATE_INTERVAL, 10),
     )
 
-    api = AsyncAvalonAPI(
+    api = AsyncMini3AvalonAPI(
         entry.data[CONF_HOST],
         entry.data[CONF_PORT],
         entry.data[CONF_TIMEOUT],

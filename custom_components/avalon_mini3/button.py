@@ -7,7 +7,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import AvalonMinerCoordinator
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from .avalon_api import AsyncAvalonAPI
+from .avalon_api import AsyncMini3AvalonAPI
 from .const import DOMAIN
 import logging
 
@@ -16,7 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     data = hass.data[DOMAIN][entry.entry_id]
     coordinator: AvalonMinerCoordinator = data["coordinator"]
-    api: AsyncAvalonAPI = data["api"]
+    api: AsyncMini3AvalonAPI = data["api"]
     entities = [
         AvalonRebootButton(coordinator, entry, api),
     ]
@@ -27,7 +27,7 @@ class AvalonBaseButton(CoordinatorEntity, ButtonEntity):
         self,
         coordinator: AvalonMinerCoordinator,
         entry: ConfigEntry,
-        api: AsyncAvalonAPI,
+        api: AsyncMini3AvalonAPI,
         translation_key: str,
     ) -> None:
         super().__init__(coordinator)  # muss zuerst CoordinatorEntity initialisieren
@@ -45,7 +45,7 @@ class AvalonBaseButton(CoordinatorEntity, ButtonEntity):
 
 
 class AvalonRebootButton(AvalonBaseButton):
-    def __init__(self, coordinator: AvalonMinerCoordinator, entry: ConfigEntry, api: AsyncAvalonAPI):
+    def __init__(self, coordinator: AvalonMinerCoordinator, entry: ConfigEntry, api: AsyncMini3AvalonAPI):
         super().__init__(coordinator, entry, api, translation_key="reboot")
 
     async def async_press(self) -> None:
