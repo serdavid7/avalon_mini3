@@ -1,4 +1,4 @@
-# custom_components/avalon_Mini3/select.py
+# custom_components/avalon_mini3/select.py
 from __future__ import annotations
 
 import logging

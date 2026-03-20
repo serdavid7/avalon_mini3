@@ -1,4 +1,4 @@
-# custom_components/avalon_Mini3/button.py
+# custom_components/avalon_mini3/button.py
 from __future__ import annotations
 from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry

@@ -1,7 +1,7 @@
-# custom_components/avalon_Mini3/const.py
+# custom_components/avalon_mini3/const.py
 """Constants for the Avalon Mini 3 integration."""
 
-DOMAIN = "avalon_Mini3"
+DOMAIN = "avalon_mini3"
 
 # Config Keys
 CONF_HOST = "host"

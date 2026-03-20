@@ -1,4 +1,4 @@
-# custom_components/avalon_Mini3/sensor.py
+# custom_components/avalon_mini3/sensor.py
 from __future__ import annotations
 import logging
 from datetime import datetime, timezone

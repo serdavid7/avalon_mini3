@@ -1,4 +1,4 @@
-# custom_components/avalon_Mini3/config_flow.py
+# custom_components/avalon_mini3/config_flow.py
 import logging
 from typing import Any
 import voluptuous as vol
