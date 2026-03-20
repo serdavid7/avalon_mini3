@@ -120,7 +120,7 @@ class AvalonWorkLevelSelect(CoordinatorEntity, SelectEntity):
 
     @property
     def current_option(self) -> str:
-        estats = self.coordinator.data.get("estat s", {})
+        estats = self.coordinator.data.get("estats", {})
         worklevel_val = estats.get("WORKLEVEL")
         try:
             return REVERSE_WORK_LEVELS[int(worklevel_val)]

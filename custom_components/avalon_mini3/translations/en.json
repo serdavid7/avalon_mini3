@@ -2,8 +2,8 @@
   "config": {
     "step": {
       "user": {
-        "title": "Avalon Nano 3S Setup",
-        "description": "Enter the connection details for your Avalon Nano 3S."
+        "title": "Avalon Mini 3 Setup",
+        "description": "Enter the connection details for your Avalon Mini 3."
       }
     },
     "error": {
@@ -17,7 +17,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "Avalon Nano 3S Options",
+        "title": "Avalon Mini 3 Options",
         "description": "What would you like to change?",
         "data": {
           "action": "Select action"
@@ -298,11 +298,12 @@
       }
     },
 
-
-
     "select": {
       "workmode": { "name": "Work Mode" },
-      "worklevel": { "name": "Performance Level" },
+      "worklevel": { "name": "Performance Level" }
+    },
+
+    "switch": {
       "lcd": { "name": "LCD Display" }
     }
   }
