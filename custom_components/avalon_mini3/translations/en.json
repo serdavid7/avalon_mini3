@@ -298,14 +298,12 @@
       }
     },
 
-    "light": {
-      "led_light": {
-        "name": "LED Light"
-      }
-    },
+
 
     "select": {
-      "workmode": { "name": "Work Mode" }
+      "workmode": { "name": "Work Mode" },
+      "worklevel": { "name": "Performance Level" },
+      "lcd": { "name": "LCD Display" }
     }
   }
 }

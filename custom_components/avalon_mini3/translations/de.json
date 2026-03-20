@@ -299,13 +299,11 @@
         "name": "Neustart"
       }
     },
-    "light": {
-      "led_light": { 
-        "name": "LED"
-      }
-    },
+
     "select": {
-      "workmode": { "name": "Arbeitsmodus" }
+      "workmode": { "name": "Arbeitsmodus" },
+      "worklevel": { "name": "Leistungsstufe" },
+      "lcd": { "name": "LCD Anzeige" }
     }
   }
 }

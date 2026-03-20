@@ -38,7 +38,7 @@ class AvalonBaseButton(CoordinatorEntity, ButtonEntity):
         self._attr_unique_id = f"{entry.entry_id}_{translation_key}"
         self._attr_device_info = {
             "identifiers": {(DOMAIN, entry.data[CONF_HOST])},
-            "name": "Avalon Mini 3",        # Device-Name muss hier gesetzt werden
+            "name": "Avalon Mini 3",        
             "manufacturer": "Canaan",
             "model": "Mini 3",
         }

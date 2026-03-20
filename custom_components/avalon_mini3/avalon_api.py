@@ -137,7 +137,7 @@ class AsyncMini3AvalonAPI:
         status = parsed.get("STATUS", {})
         if isinstance(status, list) and status:
             status = status[0]
-        success = status.get("STATUS") == "S"
+        success = status.get("STATUS") in ["S", "I"]
         message = status.get("Msg", "No message")
         return {
             "success": success,
@@ -174,7 +174,7 @@ class AsyncMini3AvalonAPI:
         if not raw or "|" not in raw:
             return {}
         data_part = raw.split("|", 1)[1].strip()
-        estats: Dict[str, Any] = {"temperatures": {}, "fans": {}, "PS": {}, "led": {}, "misc": {}}
+        estats: Dict[str, Any] = {"temperatures": {}, "fans": {}, "PS": {}, "lcd": {}, "misc": {}}
         pattern = re.compile(r"(\w+)\[([^\]]*)\]")
         for match in pattern.finditer(data_part):
             key, val = match.group(1), match.group(2).strip()
@@ -205,28 +205,16 @@ class AsyncMini3AvalonAPI:
                         estats["PS"] = {"raw": val, "parse_error": True}
                 else:
                     estats["PS"] = {"raw": val, "too_few_fields": True}
-            elif key == "LED":
+            elif key == "LcdOnoff":
                 try:
-                    estats["led"]["LED"] = int(val)
+                    estats["lcd"]["Light"] = int(val)
                 except Exception:
-                    estats["led"]["LED"] = None
-            elif key == "LEDUser":
+                    estats["lcd"]["Light"] = None
+            elif key == "WORKLEVEL":
                 try:
-                    parts = [p.strip() for p in val.split("-") if p.strip()]
-                    if len(parts) >= 6:
-                        estats["led"]["LEDUser"] = {
-                            "Effect": int(parts[0]),
-                            "Brightness": int(parts[1]),
-                            "ColorTemp": int(parts[2]),
-                            "R": int(parts[3]),
-                            "G": int(parts[4]),
-                            "B": int(parts[5]),
-                            "raw": val
-                        }
-                    else:
-                        estats["led"]["LEDUser"] = {"raw": val, "incomplete": True}
-                except Exception as e:
-                    estats["led"]["LEDUser"] = {"raw": val, "error": str(e)}
+                    estats["WORKLEVEL"] = int(val)
+                except Exception:
+                    estats["WORKLEVEL"] = None
             elif key == "WORKMODE":
                 try:
                     estats["WORKMODE"] = int(val)
@@ -238,11 +226,24 @@ class AsyncMini3AvalonAPI:
 
     async def set_workmode(self, level: int) -> Dict[str, Any]:
         return await self._command("ascset", f"0,workmode,set,{level}")
+    
+    async def set_worklevel(self, level: int) -> Dict[str, Any]:
+        # value could be -1 Eco, 0 Super
+        return await self._command("ascset", f"0,worklevel,set,{level}")
+    
+    async def set_lcd(self, value: str) -> Dict[str, Any]:
+        # value could be "0:0", "0:1"
+        return await self._command("ascset", f"0,lcd,{value}")
+    
+    async def set_limit_temp(self, value: int) -> Dict[str, Any]:
+        # value like "28"
+        return await self._command("ascset", f"0,limittemp,{value}")
 
-    async def set_led(self, effect: int, bright: int, temper: int, r: int, g: int, b: int) -> Dict[str, Any]:
-        bright = max(5, min(100, int(bright)))
-        param = f"0,ledset,{effect}-{bright}-{temper}-{r}-{g}-{b}"
-        return await self._command("ascset", param)
+    async def set_soft_on(self, unix_epoch: int) -> Dict[str, Any]:
+        return await self._command("ascset", f"0,softon,1:{unix_epoch}")
+
+    async def set_soft_off(self, unix_epoch: int) -> Dict[str, Any]:
+        return await self._command("ascset", f"0,softoff,1:{unix_epoch}")
 
     async def reboot(self) -> Dict[str, Any]:
         return await self._command("ascset", "0,reboot,0")
@@ -279,3 +280,5 @@ class AsyncMini3AvalonAPI:
             "raw": raw_result,
             "parsed": parsed
         }
+    
+    

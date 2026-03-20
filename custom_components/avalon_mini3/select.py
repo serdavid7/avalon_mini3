@@ -19,21 +19,29 @@ _LOGGER = logging.getLogger(__name__)
 # Workmode Mapping
 # =========================
 WORK_MODES = {
-    "Heater - Super": 0,
+    "Heater": 0,
     "Mining": 1,
     "Night": 2,
-    "Heater - Eco": 3,
 }
 REVERSE_WORK_MODES = {v: k for k, v in WORK_MODES.items()}
 
 # =========================
-# LED Effekt Mapping
+# Worklevels Mapping
 # =========================
-LED_EFFECTS = {
-    "LED_off": 0,
-    "LED_on": 0,
+WORK_LEVELS = {
+    "Eco": -1,
+    "Super": 0
 }
-REVERSE_LED_EFFECTS = {v: k for k, v in LED_EFFECTS.items()}
+REVERSE_WORK_LEVELS = {v: k for k, v in WORK_LEVELS.items()}
+
+# =========================
+# LCD Mapping
+# =========================
+LCD = {
+    "off": "0:0",
+    "on": "0:1",
+}
+REVERSE_LCD = {v: k for k, v in LCD.items()}
 
 
 # =========================
@@ -53,7 +61,8 @@ async def async_setup_entry(
     async_add_entities(
         [
             AvalonWorkModeSelect(coordinator, api, entry.entry_id, device_info),
-            AvalonLedEffectSelect(coordinator, api, entry.entry_id, device_info),
+            AvalonWorkLevelSelect(coordinator, api, entry.entry_id, device_info),
+            AvalonLCDSelect(coordinator, api, entry.entry_id, device_info)
         ]
     )
 
@@ -62,7 +71,6 @@ async def async_setup_entry(
 # Workmode Select
 # =========================
 class AvalonWorkModeSelect(CoordinatorEntity, SelectEntity):
-    """SelectEntity für den Workmode des Avalon Mini 3."""
 
     _attr_has_entity_name = True
     _attr_options = list(WORK_MODES.keys())
@@ -99,16 +107,14 @@ class AvalonWorkModeSelect(CoordinatorEntity, SelectEntity):
         await self.api.set_workmode(level)
         await self.coordinator.async_request_refresh()
 
-
 # =========================
-# LED Effekt Select
+# Worklevel Select
 # =========================
-class AvalonLedEffectSelect(CoordinatorEntity, SelectEntity):
-    """SelectEntity für die LED-Effekte des Avalon Mini 3."""
+class AvalonWorkLevelSelect(CoordinatorEntity, SelectEntity):
 
     _attr_has_entity_name = True
-    _attr_options = list(LED_EFFECTS.keys())
-    _attr_translation_key = "led_effect"
+    _attr_options = list(WORK_LEVELS.keys())
+    _attr_translation_key = "worklevel"
 
     def __init__(
         self,
@@ -120,28 +126,63 @@ class AvalonLedEffectSelect(CoordinatorEntity, SelectEntity):
         super().__init__(coordinator)
         self.api = api
 
-        self._attr_unique_id = f"{entry_id}_led_effect"
+        self._attr_unique_id = f"{entry_id}_worklevel"
         self._attr_device_info = device_info
 
     @property
     def current_option(self) -> str:
         estats = self.coordinator.data.get("estats", {})
-        led_user = estats.get("led", {}).get("LEDUser", {})
-        effect_val = led_user.get("Effect", 1)
-        return REVERSE_LED_EFFECTS.get(effect_val, "Stay")
+        worklevel_val = estats.get("WORKLEVEL")
+        try:
+            return REVERSE_WORK_LEVELS[int(worklevel_val)]
+        except (TypeError, ValueError, KeyError):
+            return "Super"
 
     async def async_select_option(self, option: str) -> None:
-        effect_id = LED_EFFECTS.get(option)
-        if effect_id is None:
-            _LOGGER.warning("Unbekannter LED-Effekt: %s", option)
+        level = WORK_LEVELS.get(option)
+        if level is None:
+            _LOGGER.warning("Unbekannter Worklevel: %s", option)
             return
 
-        led_user = self.coordinator.data.get("estats", {}).get("led", {}).get("LEDUser", {})
-        brightness = led_user.get("Brightness", 100)
-        color_temp = led_user.get("ColorTemp", 50)
-        r = led_user.get("R", 255)
-        g = led_user.get("G", 255)
-        b = led_user.get("B", 255)
+        await self.api.set_worklevel(level)
+        await self.coordinator.async_request_refresh()
 
-        await self.api.set_led(effect_id, brightness, color_temp, r, g, b)
+# =========================
+# LCD Select
+# =========================
+class AvalonLCDSelect(CoordinatorEntity, SelectEntity):
+
+    _attr_has_entity_name = True
+    _attr_options = list(LCD.keys())
+    _attr_translation_key = "lcd"
+
+    def __init__(
+        self,
+        coordinator: AvalonMinerCoordinator,
+        api: AsyncMini3AvalonAPI,
+        entry_id: str,
+        device_info: dict,
+    ):
+        super().__init__(coordinator)
+        self.api = api
+
+        self._attr_unique_id = f"{entry_id}_lcd"
+        self._attr_device_info = device_info
+
+    @property
+    def current_option(self) -> str:
+        estats = self.coordinator.data.get("estats", {})
+        lcd_val = estats.get("LCD")
+        try:
+            return REVERSE_LCD[lcd_val]
+        except (TypeError, ValueError, KeyError):
+            return "off"
+
+    async def async_select_option(self, option: str) -> None:
+        level = LCD.get(option)
+        if level is None:
+            _LOGGER.warning("Unknown LCD option: %s", option)
+            return
+
+        await self.api.set_lcd(level)
         await self.coordinator.async_request_refresh()
