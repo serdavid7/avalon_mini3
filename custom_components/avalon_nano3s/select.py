@@ -19,9 +19,9 @@ _LOGGER = logging.getLogger(__name__)
 # Workmode Mapping
 # =========================
 WORK_MODES = {
-    "Low": 0,
-    "Mid": 1,
-    "High": 2,
+    "Heater - Super": 0,
+    "Mining": 1,
+    "Night": 2,
 }
 REVERSE_WORK_MODES = {v: k for k, v in WORK_MODES.items()}
 
@@ -30,10 +30,7 @@ REVERSE_WORK_MODES = {v: k for k, v in WORK_MODES.items()}
 # =========================
 LED_EFFECTS = {
     "LED_off": 0,
-    "Stay": 1,
-    "Flash": 2,
-    "Breathing": 3,
-    "Loop": 4,
+    "LED_on": 0,
 }
 REVERSE_LED_EFFECTS = {v: k for k, v in LED_EFFECTS.items()}
 
