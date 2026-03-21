@@ -13,6 +13,9 @@ from . import AvalonMinerCoordinator
 from .avalon_api import AsyncMini3AvalonAPI
 from .const import DOMAIN
 
+import re
+from typing import Dict, Any
+
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(
@@ -59,8 +62,26 @@ class AvalonLimitTempNumber(CoordinatorEntity, NumberEntity):
         """Return the current limit temperature."""
         # Assuming the limit temperature is stored in the coordinator data
         # You might need to adjust this based on how the data is actually stored
-        return self.coordinator.data.get("limit_temp")
 
+        litestats = self.coordinator.data.get("litestats")
+
+        status = litestats["MM ID0"]['MM ID0']
+
+        pattern = r"(\w+)\[([^\]]*)\]"
+
+        def parse_status(status_line: str) -> Dict[str, str]:
+            # status_line must be a plain string
+            return {key: value for key, value in re.findall(pattern, status_line)}
+
+        parsed = parse_status(status)
+
+        limitemp = parsed.get("Limitemp")
+
+        if(limitemp is not None):
+            return limitemp
+        else:
+            return 50
+        
     async def async_set_native_value(self, value: float) -> None:
         """Set the limit temperature."""
         try:

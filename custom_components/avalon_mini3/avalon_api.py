@@ -154,6 +154,9 @@ class AsyncMini3AvalonAPI:
 
     async def stats(self) -> Dict[str, Any]:
         return (await self._command("stats"))["parsed"]
+    
+    async def litestats(self) -> Dict[str, Any]:
+        return (await self._command("litestats"))["parsed"]
 
     async def devs(self) -> Dict[str, Any]:
         return (await self._command("devs"))["parsed"]
@@ -178,7 +181,7 @@ class AsyncMini3AvalonAPI:
         pattern = re.compile(r"(\w+)\[([^\]]*)\]")
         for match in pattern.finditer(data_part):
             key, val = match.group(1), match.group(2).strip()
-            if key in {"ITemp", "OTemp", "TMax", "TAvg", "TarT", "MTmax", "MTavg"}:
+            if key in {"ITemp", "OTemp", "TMax", "TAvg", "TarT", "MTmax", "MTavg", "Limitemp"}:
                 try:
                     estats["temperatures"][key] = float(val)
                 except Exception:

@@ -306,6 +306,7 @@
     "switch": {
       "lcd": { "name": "LCD Display" }
     },
+    
     "number": {
       "limit_temp": { "name": "Temperature Limit" }
     }
