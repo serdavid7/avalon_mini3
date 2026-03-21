@@ -43,6 +43,7 @@ class AvalonLimitTempNumber(CoordinatorEntity, NumberEntity):
     _attr_native_step = 1
     _attr_mode = NumberMode.BOX
     _attr_native_value = 50  # Default to 50 degrees
+    _attr_icon = "mdi:thermometer"
 
     def __init__(
         self,
@@ -80,7 +81,7 @@ class AvalonLimitTempNumber(CoordinatorEntity, NumberEntity):
 
             if limitemp is not None:
                 try:
-                    return float(limitemp)
+                    return int(limitemp)
                 except ValueError:
                     return 50
             else:
