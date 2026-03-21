@@ -60,26 +60,33 @@ class AvalonLimitTempNumber(CoordinatorEntity, NumberEntity):
     @property
     def native_value(self) -> float | None:
         """Return the current limit temperature."""
-        # Assuming the limit temperature is stored in the coordinator data
-        # You might need to adjust this based on how the data is actually stored
+        try:
+            litestats = self.coordinator.data.get("litestats", {})
+            
+            if not litestats or "MM ID0" not in litestats:
+                return 50
 
-        litestats = self.coordinator.data.get("litestats")
+            status = litestats["MM ID0"].get('MM ID0', '')
 
-        status = litestats["MM ID0"]['MM ID0']
+            pattern = r"(\w+)\[([^\]]*)\]"
 
-        pattern = r"(\w+)\[([^\]]*)\]"
+            def parse_status(status_line: str) -> Dict[str, str]:
+                # status_line must be a plain string
+                return {key: value for key, value in re.findall(pattern, status_line)}
 
-        def parse_status(status_line: str) -> Dict[str, str]:
-            # status_line must be a plain string
-            return {key: value for key, value in re.findall(pattern, status_line)}
+            parsed = parse_status(status)
 
-        parsed = parse_status(status)
+            limitemp = parsed.get("Limitemp")
 
-        limitemp = parsed.get("Limitemp")
-
-        if(limitemp is not None):
-            return limitemp
-        else:
+            if limitemp is not None:
+                try:
+                    return float(limitemp)
+                except ValueError:
+                    return 50
+            else:
+                return 50
+        except Exception as e:
+            _LOGGER.error("Error getting limit temperature: %s", e)
             return 50
         
     async def async_set_native_value(self, value: float) -> None:
