@@ -72,6 +72,7 @@ class AvalonLCDSwitch(CoordinatorEntity, SwitchEntity):
 class AvalonStandbySwitch(CoordinatorEntity, SwitchEntity):
     _attr_has_entity_name = True
     _attr_translation_key = "standby"
+    _attr_icon = "mdi:power"
 
     def __init__(
         self,
