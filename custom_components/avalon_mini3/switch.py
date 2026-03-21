@@ -97,11 +97,11 @@ class AvalonStandbySwitch(CoordinatorEntity, SwitchEntity):
     async def async_turn_on(self, **kwargs) -> None:
         """Turn standby mode on."""
         current_time = int(time.time())
-        await self.api.set_soft_on(current_time)
+        await self.api.set_soft_off(current_time)
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs) -> None:
         """Turn standby mode off."""
         current_time = int(time.time())
-        await self.api.set_soft_off(current_time)
+        await self.api.set_soft_on(current_time)
         await self.coordinator.async_request_refresh()

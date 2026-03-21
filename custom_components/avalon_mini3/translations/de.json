@@ -308,7 +308,8 @@
 
 
     "switch": {
-      "lcd": { "name": "LCD Display" }
+      "lcd": { "name": "LCD Display" },
+      "standby": { "name": "Standby" }
     },
 
     "number": {
