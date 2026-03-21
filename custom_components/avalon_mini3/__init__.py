@@ -40,6 +40,7 @@ class AvalonMinerCoordinator(DataUpdateCoordinator[dict]):
                 "summary": await self.api.summary(),
                 "stats": await self.api.stats(),
                 "estats": await self.api.estats(),
+                "litestats": await self.api.litestats(),
                 "devs": await self.api.devs(),
                 "pools": await self.api.pools(),
             }

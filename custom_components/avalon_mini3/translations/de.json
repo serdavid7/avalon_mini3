@@ -304,6 +304,15 @@
       "workmode": { "name": "Arbeitsmodus" },
       "worklevel": { "name": "Leistungsstufe" },
       "lcd": { "name": "LCD Anzeige" }
+    },
+
+
+    "switch": {
+      "lcd": { "name": "LCD Display" }
+    },
+
+    "number": {
+      "limit_temp": { "name": "Temp Limit" }
     }
   }
 }
