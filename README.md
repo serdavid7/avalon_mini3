@@ -5,8 +5,8 @@
 **Avalon Mini 3** is a **Home Assistant integration** for the Canaan Avalon Mini 3 ASIC miner.
 
 - 230 sensors (approx. 60 active)
-- Workmode control (Low / Mid / High)
-- Control LED color, brightness and effects
+- Workmode control (Mining / Night / Heater - Eco / Heater - Super)
+- Control LCD display
 - Reboot button
 - Change pool configuration data (password required!)
 
@@ -36,8 +36,8 @@ This integration allows full monitoring and control of the **Avalon Mini 3 Miner
 Features:
 
 - Live miner statistics (temperature, fan, hashrate, power consumption)
-- **LED control** (RGB colors, brightness, effects)
-- Mining **workmode** selection (Low, Mid, High)
+- LCD Display On/Off
+- Mining **workmode** selection (Mining / Night / Heater - Eco / Heater - Super)
 - Reboot button directly from Home Assistant
 - Enter/change pool data via the **GUI Config Flow**
 
